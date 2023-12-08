@@ -1,6 +1,14 @@
 import React, { useState, ChangeEvent } from "react";
-import { FormControl, FormGroup, Input, InputLabel, Typography, Button, Link } from "@mui/material";
-import { styled } from '@mui/system';
+import {
+  FormControl,
+  FormGroup,
+  Input,
+  InputLabel,
+  Typography,
+  Button,
+  Link,
+} from "@mui/material";
+import { styled } from "@mui/system";
 import { signupAPI } from "../services/apis";
 import { useNavigate } from "react-router-dom";
 import { useToken } from "../tokenContext";
@@ -24,7 +32,7 @@ const Signup: React.FC = () => {
   const [user, setUser] = useState<User>({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
   const [errMessage, setErrMessage] = useState<string>("");
   const navigate = useNavigate();
@@ -32,7 +40,7 @@ const Signup: React.FC = () => {
   const onValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUser({
       ...user,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     setErrMessage("");
   };
@@ -40,15 +48,17 @@ const Signup: React.FC = () => {
     const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     const isValid = passwordRegex.test(user.password);
     if (isValid) {
-      const response:any = await signupAPI(user);
+      const response: any = await signupAPI(user);
       if (response?.response?.data?.error) {
         setErrMessage(response?.response.data.message);
+      } else {
+        setToken(response);
+        navigate("/");
+      }
     } else {
-      setToken(response)
-      navigate("/")
-    }
-    } else {
-      setErrMessage("Password must be at least 8 characters long and contain at least one digit and one special character.")
+      setErrMessage(
+        "Password must be at least 8 characters long and contain at least one digit and one special character."
+      );
     }
   };
 
@@ -68,13 +78,23 @@ const Signup: React.FC = () => {
         <Input onChange={(e: any) => onValueChange(e)} name="password" />
       </Form>
       <Form>
-        <Button variant="contained" onClick={() => handleSignup()}>Sign up</Button>
+        <Button variant="contained" onClick={() => handleSignup()}>
+          Sign up
+        </Button>
       </Form>
-      <p style={{
-        color: 'red', textAlign: 'center',
-        fontSize: '14px', marginTop: '5px'
-      }}>{errMessage}</p>
-      <p>Already have an account? <Link href="/login">Login</Link></p>
+      <p
+        style={{
+          color: "red",
+          textAlign: "center",
+          fontSize: "14px",
+          marginTop: "5px",
+        }}
+      >
+        {errMessage}
+      </p>
+      <p>
+        Already have an account? <Link href="/login">Login</Link>
+      </p>
     </Container>
   );
 };
